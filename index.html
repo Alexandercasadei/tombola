@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tombola</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .grid button {
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
+    }
+    .grid button.clicked {
+      background: #4caf50;
+      color: white;
+    }
+    #last-number {
+      font-size: 30px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    input[type="number"] {
+      width: 80px;
+      font-size: 18px;
+      text-align: center;
+    }
+    button.insert-btn {
+      font-size: 18px;
+      padding: 6px 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tombola</h1>
+
+ 
+
+  <div id="last-number"></div>
+
+  <div class="grid" id="grid"></div>
+
+  <div id="history"><span id="historyList"></span></div>
+
+  <script>
+    const grid = document.getElementById("grid");
+    const lastNumber = document.getElementById("last-number");
+    const historyList = document.getElementById("historyList");
+    const estratti = [];
+
+    // Crea la griglia dei numeri
+    for (let i = 1; i <= 90; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.onclick = () => estraiNumero(i, btn);
+      grid.appendChild(btn);
+    }
+
+    function estraiNumero(numero, btn) {
+      if (estratti.includes(numero)) return;
+      btn.classList.add("clicked");
+      lastNumber.textContent = "Numero estratto: " + numero;
+      estratti.push(numero);
+      historyList.textContent = estratti.join(", ");
+      speakNumber(numero);
+    }
+
+    function manualInsert() {
+      const val = parseInt(document.getElementById("manualInput").value);
+      if (isNaN(val) || val < 1 || val > 90 || estratti.includes(val)) return;
+      const btn = document.querySelector('.grid button:nth-child(' + val + ')');
+      if (btn && !btn.classList.contains('clicked')) {
+        estraiNumero(val, btn);
+        document.getElementById("manualInput").value = "";
+      }
+    }
+
+    function checkRange(input) {
+      if (input.value < 1) input.value = 1;
+      if (input.value > 90) input.value = 90;
+    }
+
+    function speakNumber(num) {
+      const msg = new SpeechSynthesisUtterance(num.toString());
+      msg.lang = "it-IT";
+      speechSynthesis.speak(msg);
+    }
+  </script>
+</body>
+</html>
