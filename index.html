@@ -43,17 +43,20 @@
       font-size: 18px;
       padding: 6px 10px;
     }
+    #toggle-voice {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h1>Tombola</h1>
-
- 
+  <button id="toggle-voice">🔊 Voce attiva</button>
 
   <div id="last-number"></div>
-
   <div class="grid" id="grid"></div>
-
   <div id="history"><span id="historyList"></span></div>
 
   <script>
@@ -61,6 +64,13 @@
     const lastNumber = document.getElementById("last-number");
     const historyList = document.getElementById("historyList");
     const estratti = [];
+    let voceAttiva = true;
+
+    const toggleVoiceBtn = document.getElementById("toggle-voice");
+    toggleVoiceBtn.onclick = () => {
+      voceAttiva = !voceAttiva;
+      toggleVoiceBtn.textContent = voceAttiva ? "🔊 Voce attiva" : "🔇 Voce disattiva";
+    };
 
     // Crea la griglia dei numeri
     for (let i = 1; i <= 90; i++) {
@@ -95,6 +105,7 @@
     }
 
     function speakNumber(num) {
+      if (!voceAttiva) return;
       const msg = new SpeechSynthesisUtterance(num.toString());
       msg.lang = "it-IT";
       speechSynthesis.speak(msg);
